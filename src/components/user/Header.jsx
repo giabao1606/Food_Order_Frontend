@@ -142,7 +142,7 @@ const Header = ({ onOpenAuth, onOpenCart }) => {
         const user = JSON.parse(userStr);
         fetchNotifications();
         
-        socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+        socket = io(import.meta.env.VITE_API_URL || 'https://food-order-backend-myjy.onrender.com');
         socket.emit('join_user_room', user.id);
 
         socket.on('new_notification', (notif) => {
