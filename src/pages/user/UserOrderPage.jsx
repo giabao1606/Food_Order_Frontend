@@ -14,8 +14,15 @@ const VNPayCountdown = ({ createdAt }) => {
             if (typeof createdAt === 'string' && createdAt.includes(' ') && !createdAt.includes('T')) {
                 safeDate = createdAt.replace(' ', 'T');
             }
-            const orderTime = new Date(safeDate).getTime();
+            let orderTime = new Date(safeDate).getTime();
             const now = new Date().getTime();
+            
+            // Xử lý lỗi lệch múi giờ (UTC vs Local)
+            // Nếu orderTime nằm ở quá khứ hơn 6 tiếng so với hiện tại, nghĩa là DB lưu giờ UTC (bị lùi 7 tiếng)
+            if (now - orderTime > 6 * 60 * 60 * 1000) {
+                orderTime += 7 * 60 * 60 * 1000;
+            }
+
             const diff = (orderTime + 15 * 60 * 1000) - now;
 
             if (diff <= 0) {
