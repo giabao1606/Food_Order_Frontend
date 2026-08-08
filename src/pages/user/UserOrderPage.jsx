@@ -9,7 +9,12 @@ const VNPayCountdown = ({ createdAt }) => {
 
     useEffect(() => {
         const calculateTime = () => {
-            const orderTime = new Date(createdAt).getTime();
+            // Fix Safari/iOS issue with MySQL datetime string
+            let safeDate = createdAt;
+            if (typeof createdAt === 'string' && createdAt.includes(' ') && !createdAt.includes('T')) {
+                safeDate = createdAt.replace(' ', 'T');
+            }
+            const orderTime = new Date(safeDate).getTime();
             const now = new Date().getTime();
             const diff = (orderTime + 15 * 60 * 1000) - now;
 
