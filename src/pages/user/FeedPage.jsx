@@ -25,6 +25,7 @@ const FeedPage = () => {
     };
 
     useEffect(() => {
+        document.title = "Bảng tin - Food Order";
         fetchFeed();
     }, []);
 

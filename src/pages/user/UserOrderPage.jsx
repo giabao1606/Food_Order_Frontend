@@ -80,7 +80,16 @@ const UserOrderPage = () => {
         document.title = "Đơn hàng của tôi";
         const controller = new AbortController();
         fetchMyOrders(controller.signal);
-        return () => controller.abort();
+        
+        const handleOrderUpdated = () => {
+            fetchMyOrders(controller.signal);
+        };
+        window.addEventListener("orderUpdated", handleOrderUpdated);
+        
+        return () => {
+            controller.abort();
+            window.removeEventListener("orderUpdated", handleOrderUpdated);
+        };
     }, []);
 
     const handleViewDetails = async (order) => {

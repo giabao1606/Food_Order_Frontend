@@ -39,6 +39,7 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
   
   useEffect(() => {
+    document.title = "Trang chủ - Food Order";
     const controller = new AbortController();
     const signal = controller.signal;
 
