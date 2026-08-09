@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL 
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : 'https://food-order-backend-myjy.onrender.com/api';
+
 const axiosClient = axios.create({
-    baseURL: 'https://food-order-backend-myjy.onrender.com/api',
+    baseURL: baseURL,
     headers: {
         'Content-Type': 'application/json',
     },
