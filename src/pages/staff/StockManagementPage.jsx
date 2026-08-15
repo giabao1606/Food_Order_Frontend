@@ -27,6 +27,7 @@ const StockManagementPage = () => {
         note: '',
         details: []
     });
+    const [isSubmittingTransaction, setIsSubmittingTransaction] = useState(false);
 
     // Tính tổng tiền phiếu nhập (chỉ áp dụng IMPORT)
     const computedTotalAmount = transactionForm.details.reduce((sum, d) => {
@@ -171,8 +172,10 @@ const StockManagementPage = () => {
 
     const handleSubmitTransaction = async (e) => {
         e.preventDefault();
+        if (isSubmittingTransaction) return;
         if (!branchId || branchId === 'null') return alert("Lỗi: Không tìm thấy chi nhánh!");
         try {
+            setIsSubmittingTransaction(true);
             // TÍNH TOÁN QUY ĐỔI NGAY TẠI FRONTEND TRƯỚC KHI GỬI XUỐNG BACKEND
             const validDetails = transactionForm.details
                 .filter(d => d.ingredient_id && Number(d.quantity) > 0)
@@ -203,6 +206,8 @@ const StockManagementPage = () => {
 
         } catch (error) {
             alert(error.response?.data?.message || 'Có lỗi xảy ra khi tạo phiếu!');
+        } finally {
+            setIsSubmittingTransaction(false);
         }
     };
 
@@ -745,7 +750,9 @@ const StockManagementPage = () => {
                             )}
                             <div className="flex gap-4">
                                 <button type="button" onClick={() => setIsTransactionModalOpen(false)} className="flex-1 p-3.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">Hủy bỏ</button>
-                                <button onClick={handleSubmitTransaction} type="button" className="flex-1 p-3.5 bg-[#006a6a] text-white font-bold rounded-xl hover:bg-teal-700 transition">Xác nhận Lưu Phiếu</button>
+                                <button disabled={isSubmittingTransaction} onClick={handleSubmitTransaction} type="button" className={`flex-1 p-3.5 font-bold rounded-xl transition text-white ${isSubmittingTransaction ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#006a6a] hover:bg-teal-700'}`}>
+                                    {isSubmittingTransaction ? 'Đang xử lý...' : 'Xác nhận Lưu Phiếu'}
+                                </button>
                             </div>
                         </div>
                     </div>
