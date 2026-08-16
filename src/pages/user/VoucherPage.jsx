@@ -21,7 +21,7 @@ const VoucherPage = () => {
                 const profileRes = await axiosClient.get('/users/profile', { signal });
                 if (profileRes.success){
                     setUserPoints(profileRes.user.reward_points || 0);
-                    setCheckin(profileRes.user.has_checked_in_today || false);
+                    setCheckin(profileRes.has_checked_in_today || false);
                 }
 
                 // 2. Lấy Ví Voucher của tôi
