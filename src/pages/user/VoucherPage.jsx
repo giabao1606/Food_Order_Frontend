@@ -19,7 +19,10 @@ const VoucherPage = () => {
             try {
                 // 1. Lấy điểm thưởng của user
                 const profileRes = await axiosClient.get('/users/profile', { signal });
-                if (profileRes.success) setUserPoints(profileRes.user.reward_points || 0);
+                if (profileRes.success){
+                    setUserPoints(profileRes.user.reward_points || 0);
+                    setCheckin(profileRes.user.has_checked_in_today || false);
+                }
 
                 // 2. Lấy Ví Voucher của tôi
                 const myRes = await axiosClient.get('/vouchers/my-vouchers', { signal });
