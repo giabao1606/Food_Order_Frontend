@@ -8,6 +8,7 @@ const VoucherPage = () => {
     const [userPoints, setUserPoints] = useState(0);
     const [loading, setLoading] = useState(true);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [checkin, setCheckin] = useState(false);
 
     useEffect(() => {
         document.title = "Trung tâm ưu đãi";
@@ -42,6 +43,19 @@ const VoucherPage = () => {
         fetchData();
         return () => controller.abort();
     }, [refreshTrigger]);
+
+    const handleCheckin = async () =>{
+        try{
+            const res = await axiosClient.post('users/daily-checkin');
+            if(res.success){
+                alert("Điểm thưởng đã được cộng vào tài khoản!");
+                setUserPoints(prev => prev + res.points_earned);
+                setCheckin(true);
+            }
+        }catch(error){
+            alert(error.response?.data?.message || "Lỗi khi thực hiện check-in.");
+        }
+    };
 
     const handleClaimVoucher = async (voucher) => {
         const token = localStorage.getItem('token');
@@ -85,6 +99,15 @@ const VoucherPage = () => {
                         <p className="text-4xl font-black flex items-center justify-center gap-2 mt-1">
                             <FaCoins className="text-yellow-300" /> {userPoints}
                         </p>
+                        <button
+                            onClick={handleCheckin}
+                            disabled={checkin}
+                            className={`mt-3 px-6 py-2 rounded-full font-semibold transition ${
+                                checkin ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-yellow-400 hover:bg-yellow-500 text-white'
+                            }`}
+                        >
+                            {checkin ? 'Đã check-in hôm nay' : 'Check-in nhận 10 điểm'}
+                        </button>
                     </div>
                 </div>
 
