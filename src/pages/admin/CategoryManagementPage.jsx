@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axiosClient from '../../utils/axiosClient';
-import { MdEdit, MdVisibility, MdVisibilityOff, MdAdd, MdClose } from 'react-icons/md';
+import { MdEdit, MdVisibility, MdVisibilityOff, MdAdd, MdClose, MdDelete } from 'react-icons/md';
 
 const CategoryManagementPage = () => {
     const [categories, setCategories] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null); 
-    // Mặc định form data dùng Name và Status
+    const [deleteCategory, setDeleteCategory] = useState(null);
     const [formData, setFormData] = useState({ name: '', status: 1 });
 
     const fetchCategories = async (signal) => {
@@ -30,6 +30,7 @@ const CategoryManagementPage = () => {
         setFormData({ name: '', status: 1 });
         setIsModalOpen(true);
     };
+
 
     const openEditModal = (category) => {
         setEditingCategory(category);
@@ -67,6 +68,20 @@ const CategoryManagementPage = () => {
         }
     };
 
+    const handleDelete = async (categoryId, categoryName) => {
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa danh mục "${categoryName}"?`)) return;
+        try {
+            const res = await axiosClient.delete(`/categories/delete/${categoryId}`);
+            if(res.success)
+            {
+                alert(res.message || "Xóa danh mục thành công!");
+                fetchCategories();
+            }
+        } catch (error) {
+            alert(error.message || "Lỗi khi xóa");
+        }
+    };
+
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto relative">
             <div className="flex justify-between items-center mb-8">
@@ -80,10 +95,17 @@ const CategoryManagementPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {categories.map((cat) => (
-                    <div key={cat.id} className={`bg-white rounded-3xl p-6 shadow border ${cat.status === 0 ? 'opacity-70' : ''}`}>
-                        <h3 className="text-lg font-bold text-gray-800 mb-1">{cat.name}</h3>
+                    <div key={cat.id} className={`relative bg-white rounded-3xl p-6 shadow border ${cat.status === 0 ? 'opacity-70' : ''}`}>
+                        <button
+                            onClick={() => handleDelete(cat.id, cat.name)}
+                            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                            title="Xóa danh mục"
+                        >
+                            <MdDelete size={18} />
+                        </button>
+                        <h3 className="text-lg font-bold text-gray-800 mb-1 pr-6">{cat.name}</h3>
                         <p className="text-gray-400 text-xs mb-6">Mã: #{cat.id}</p>
-                        
+                        <> </>
                         <div className="flex gap-2">
                             <button onClick={() => handleToggleStatus(cat)} className="flex-1 py-2 bg-gray-50 rounded-xl text-xs font-bold flex justify-center gap-1">
                                 {cat.status === 1 ? <><MdVisibilityOff size={16}/> Ẩn</> : <><MdVisibility size={16}/> Hiện</>}
