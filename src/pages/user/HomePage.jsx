@@ -49,8 +49,7 @@ const HomePage = () => {
         const branchId = localStorage.getItem('selectedBranchId') || 1;
 
         const [catData, prodData, bannerData, feedRes] = await Promise.all([
-          axiosClient.get('/categories', { signal }),
-          // 2. ĐÃ FIX: Đính kèm ?branch_id=... vào API
+          axiosClient.get('/categories/active', { signal }),
           axiosClient.get('/products', { signal }),
           axiosClient.get('/banners/active', { signal }),
           axiosClient.get('/feed?limit=3', { signal }).catch(e => ({ success: false })) // Bắt lỗi để không dội Promise.all
